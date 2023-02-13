@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Новая запись{% endblock %}
+{% block title %}{% if form.instance.pk %}Редактировать запись{% else %}Новая запись{% endif %}{% endblock %}
 {% block content %}
 <!-- загружаем фильтр -->
 {% load user_filters %}
@@ -7,7 +7,7 @@
 <div class="row justify-content-center">
     <div class="col-md-8 p-5">
         <div class="card">
-            <div class="card-header">Новая запись</div>
+            <div class="card-header">{% if form.instance.pk %}Редактировать запись{% else %}Новая запись{% endif %}</div>
             <div class="card-body">
 
               {% for error in form.errors %}
@@ -16,7 +16,7 @@
                   </div>
                 {% endfor %}
 
-                <form method="post" action="{% url 'new_post' %}">
+                <form method="post" action="{% if form.instance.pk %}{% url 'post_edit' form.instance.pk %}{% else %}{% url 'new_post' %}{% endif %}">
                     {% csrf_token %}
 
                     {% for field in form %}
@@ -36,7 +36,7 @@
 
                     <div class="col-md-6 offset-md-4">
                             <button type="submit" class="btn btn-primary">
-                                Создать запись
+                                {% if form.instance.pk %}Сохранить{% else %}Создать{% endif %}
                             </button>
                     </div>
                 </form>

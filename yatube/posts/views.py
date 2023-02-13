@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import Post, Group
+from .models import Post, Group, User
 from .forms import PostForm
 
 
@@ -76,6 +76,62 @@ def new_post(request):
 
     return render(request, template, {'form': form})
 
+
+def profile(request, username):
+    """
+    Профиль пользователя.
+
+    :param username:
+    :return:
+    """
+    template = 'profile.html'
+    author = get_object_or_404(User, username=username)
+    post_list = author.posts.all()
+    paginator = Paginator(post_list, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {'author': author, 'page': page}
+    return render(request, template, context)
+
+
+def post_view(request, username, post_id):
+    """
+    Просмотр записи пользователя
+
+    :param username:
+    :param post_id:
+    :return:
+    """
+    template = 'post.html'
+    author = get_object_or_404(User, username=username)
+    post = author.posts.filter(pk=post_id)
+    context = {'author': author, 'post': post}
+    return render(request, template, context)
+
+
+def post_edit(request, username, post_id):
+    """
+    Редактирование записи.
+
+    :param username:
+    :param post_id:
+    :return:
+    """
+    template = 'new_post.html'
+
+    author = get_object_or_404(User, username=username)
+    post = author.posts.filter(pk=post_id)
+    # проверка что текущий пользователь это автор записи
+    if author != request.user:
+        return redirect('post_view', username, post_id)
+
+    form = PostForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('post_view', username, post_id)
+
+    return render(request, template, {'form': form, 'post': post})
 
 
 
