@@ -57,7 +57,7 @@ def group_posts(request, slug):
 @login_required()
 def new_post(request):
     """
-    Добавить новую запись, доступно для авторизованного пользователя
+    Добавить новую запись, доступно для авторизованного пользователя.
 
     :return: в случае успешной валидации формы перенаправление на главную страницу и сохранение данных из форма в БД,
     иначе страница не меняется и данные не сохраняются
@@ -82,7 +82,7 @@ def profile(request, username):
     Профиль пользователя.
 
     :param username:
-    :return:
+    :return: страница профиль пользователя и записи этого пользователя
     """
     template = 'profile.html'
     author = get_object_or_404(User, username=username)
@@ -96,11 +96,11 @@ def profile(request, username):
 
 def post_view(request, username, post_id):
     """
-    Просмотр записи пользователя
+    Просмотр записи пользователя.
 
     :param username:
     :param post_id:
-    :return:
+    :return: страница записи, содержащая полную информацию об этой записи
     """
     template = 'post.html'
     author = get_object_or_404(User, username=username)
@@ -115,13 +115,14 @@ def post_edit(request, username, post_id):
 
     :param username:
     :param post_id:
-    :return:
+    :return: если текущий пользователь - это автор записи, то возвращается страница редактирования записи, иначе
+    страница просмотра записи
     """
     template = 'new_post.html'
 
     author = get_object_or_404(User, username=username)
     post = author.posts.filter(pk=post_id)
-    # проверка что текущий пользователь это автор записи
+    # проверка что текущий пользователь - это автор записи
     if author != request.user:
         return redirect('post_view', username, post_id)
 
