@@ -1,5 +1,8 @@
 from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 from .models import Post, Group
+from .forms import PostForm
 
 
 def index(request):
@@ -44,4 +47,30 @@ def group_posts(request, slug):
     context = {"group": group, "posts": posts}
 
     return render(request, template, context)
+
+
+@login_required()
+def new_post(request):
+    """
+    Добавить новую запись, доступно для авторизованного пользователя
+
+    :return: в случае успешной валидации формы перенаправление на главную страницу и сохранение данных из форма в БД,
+    иначе страница не меняется и данные не сохраняются
+    """
+    template = "new_post.html"
+
+    form = PostForm(request.POST or None)
+
+    # валидация формы, в случае успеха сохраняем данные в БД и перенаправляем
+    if form.is_valid():
+        temp_form = form.save(commit=False)
+        temp_form.author = request.user  # получаем текущего пользователя
+        temp_form.save()
+        # в случае успешной валидации перенаправляем на главную страницу
+        return redirect('index')
+
+    return render(request, template, {'form': form})
+
+
+
 

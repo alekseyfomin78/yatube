@@ -27,7 +27,12 @@ SECRET_KEY = 'django-insecure-ji5f+muz65hc)x_0tusmtv-ul-!v#=u0#9@4_okw4lu6wc_um7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "[::1]",
+    "testserver",
+]
 
 INTERNAL_IPS = [
     '127.0.0.1',
@@ -145,3 +150,10 @@ LOGIN_URL = "/auth/login/"
 LOGIN_REDIRECT_URL = "index"
 # при выходе из системы перенаправление на главную страницу
 LOGOUT_REDIRECT_URL = "index"
+
+# подключение модуля для отправки писем на почту (для смены пароля например)
+# подключаем движок filebased.EmailBackend - который эмулирует отправку письма на почту,
+# на самом деле письмо не отправляется, будет только складываться в указанную директорию
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# директория, в которую будут складываться файлы писем
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
