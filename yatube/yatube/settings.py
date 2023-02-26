@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+from distutils.util import strtobool
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,9 +24,11 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ji5f+muz65hc)x_0tusmtv-ul-!v#=u0#9@4_okw4lu6wc_um7'
+# SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')  # для прода
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = strtobool(os.getenv('DJANGO_DEBUG', 'no'))  # для прода
 
 ALLOWED_HOSTS = [
     "localhost",

@@ -106,6 +106,9 @@ def post_view(request, username, post_id):
     template = 'post.html'
     author = get_object_or_404(User, username=username)
     post = author.posts.filter(pk=post_id)
+
+    # TODO: добавить комментарии
+
     context = {'author': author, 'post': post}
     return render(request, template, context)
 
@@ -137,6 +140,29 @@ def post_edit(request, username, post_id):
         return redirect('post_view', username, post_id)
 
     return render(request, template, {'form': form, 'post': post})
+
+
+@login_required()
+def add_comment(request, post_id):
+    """
+    Добавление комментария к посту
+
+    :param request:
+    :param post_id:
+    :return:
+    """
+    template = 'comments.html'
+
+    form = CommentForm(request.POST or None)
+
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = get_object_or_404(Post, pk=post_id)
+        form.save()
+        return redirect('post_view', post_id=post_id)
+
+    return render(request, template, {'form': form})
 
 
 def page_not_found(request, exception):
