@@ -64,9 +64,10 @@ def new_post(request):
     """
     template = "new_post.html"
 
+    # определяем форму и получаем данные введеные пользователем
     form = PostForm(request.POST or None)
 
-    # валидация формы, в случае успеха сохраняем данные в БД и перенаправляем
+    # если данные в форме валидны, то сохраняем данные в БД и перенаправляем пользователя
     if form.is_valid():
         temp_form = form.save(commit=False)
         temp_form.author = request.user  # получаем текущего пользователя
@@ -109,6 +110,7 @@ def post_view(request, username, post_id):
     return render(request, template, context)
 
 
+@login_required()
 def post_edit(request, username, post_id):
     """
     Редактирование записи.
@@ -126,13 +128,42 @@ def post_edit(request, username, post_id):
     if author != request.user:
         return redirect('post_view', username, post_id)
 
+    # определяем форму и получаем данные введенные пользователем
     form = PostForm(request.POST or None)
 
+    # если данные в форме валидны, то сохраняем данные в БД и перенаправляем пользователя
     if form.is_valid():
         form.save()
         return redirect('post_view', username, post_id)
 
     return render(request, template, {'form': form, 'post': post})
 
+
+def page_not_found(request, exception):
+    """
+    Страница 404 ошибки
+
+    :param request:
+    :param exception:
+    :return:
+    """
+    # Переменная exception содержит отладочную информацию,
+    # выводить её в шаблон пользователской страницы 404 мы не станем
+    return render(
+        request,
+        "misc/404.html",
+        {"path": request.path},
+        status=404
+    )
+
+
+def server_error(request):
+    """
+    Страница 500 ошибки
+
+    :param request:
+    :return:
+    """
+    return render(request, "misc/500.html", status=500)
 
 
