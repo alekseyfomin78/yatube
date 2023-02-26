@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import Post, Group, User
-from .forms import PostForm
+from .models import Post, Group, User, Follow
+from .forms import PostForm, CommentForm
+from django.views.decorators.cache import cache_page
 
 
+# @cache_page(20)  # кэширование страницы, обновление(запрос к БД и т.д) страницы происходит раз в 20 сек.
 def index(request):
     """
     Функция для представления главной страницы.

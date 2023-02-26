@@ -170,3 +170,10 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
 # Идентификатор текущего сайта
 SITE_ID = 1
+
+# кэширование (на проде обычно используется БД Redis)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
