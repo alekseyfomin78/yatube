@@ -8,11 +8,7 @@
     <p>{{ group.description }}</p>                                       <!-- описание группы -->
 
     {% for post in page %}                          <!-- проходим по списку постов группы-->
-    <h3>
-        Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
-    </h3>
-    <p>{{ post.text|linebreaksbr }}</p>              <!-- linebreaksbr - заменяет перенос строки \n на HTML тег <br> -->
-    {% if not forloop.last %}<hr>{% endif %}
+        {% include "post_item.html" with post=post %}
     {% endfor %}
 
     {% if page.has_other_pages %}                   <!-- список страниц для листания -->

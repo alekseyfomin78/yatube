@@ -134,7 +134,7 @@ def post_edit(request, username, post_id):
         return redirect('post_view', username, post_id)
 
     # определяем форму и получаем данные введенные пользователем
-    form = PostForm(request.POST or None)
+    form = PostForm(request.POST or None, files=request.FILES or None)
 
     # если данные в форме валидны, то сохраняем данные в БД и перенаправляем пользователя
     if form.is_valid():
@@ -194,4 +194,55 @@ def server_error(request):
     """
     return render(request, "misc/500.html", status=500)
 
+
+@login_required
+def follow_index(request):
+    """
+    Страница с постами авторов, на которых подписан пользователь
+
+    :param request:
+    :return:
+    """
+    template = 'follow.html'
+
+    posts = Post.objects.filter(author__following__user=request.user)
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    context = {
+        'page': page,
+    }
+    return render(request, template, context)
+
+
+@login_required
+def profile_follow(request, username):
+    """
+    Подписаться на пользователя
+
+    :param request:
+    :param username:
+    :return:
+    """
+    follow_author = get_object_or_404(User, username=username)
+    if follow_author != request.user and (not request.user.follower.filter(author=follow_author).exists()):
+        Follow.objects.create(user=request.user, author=follow_author)
+    return redirect('profile', username)
+
+
+@login_required
+def profile_unfollow(request, username):
+    """
+    Отписаться от пользователя
+
+    :param request:
+    :param username:
+    :return:
+    """
+
+    follow_author = get_object_or_404(User, username=username)
+    data_follow = request.user.follower.filter(author=follow_author)
+    if data_follow.exists():
+        data_follow.delete()
+    return redirect('profile', username)
 

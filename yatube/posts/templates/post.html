@@ -46,26 +46,7 @@
 
             <!-- Пост -->
             {% for pos in post %}
-                <div class="card mb-3 mt-1 shadow-sm">
-                        <div class="card-body">
-                                <p class="card-text">
-                                        <!-- Ссылка на страницу автора в атрибуте href; username автора в тексте ссылки -->
-                                        <a href="/{{ author.username }}/"><strong class="d-block text-gray-dark">@{{ author.username }}</strong></a>
-                                        <!-- Текст поста -->
-                                        {{ pos.text|linebreaksbr }}
-                                </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                        <div class="btn-group ">
-                                                <!-- Ссылка на редактирование, показывается только автору записи -->
-                                                {% if author == request.user %}
-                                                    <a class="btn btn-sm text-muted" href="/{{ author.username }}/{{ pos.id }}/edit" role="button">Редактировать</a>
-                                                {% endif %}
-                                        </div>
-                                        <!-- Дата публикации  -->
-                                        <small class="text-muted">{{ pos.pub_date|date:"d M Y" }}</small>
-                                </div>
-                        </div>
-                </div>
+                {% include "post_item.html" with post=pos %}
             {% endfor %}
      </div>
     </div>
