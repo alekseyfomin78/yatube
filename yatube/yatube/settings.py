@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "debug_toolbar",  # django debug toolbar
+    'sorl.thumbnail',  # приложение для работы с графикой
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,10 @@ STATIC_URL = '/static/'
 
 # задаём адрес директории, куда командой *collectstatic* будет собрана вся статика
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+# директория для загрузки изображений
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

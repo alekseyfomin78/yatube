@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ author.get_full_name }}{% endblock %}
 {% block content %}
+{% load thumbnail %}                                                     <!-- подгружаем шаблон для изображений -->
 <!-- загружаем фильтр -->
 {% load user_filters %}
 

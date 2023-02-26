@@ -3,6 +3,8 @@
 {% block header %}Последние обновления на сайте{% endblock %}    <!-- переопределяем блок header -->
 {% block content %}                                              <!-- переопределяем блок content -->
 
+    {% include "menu.html" with index=True %}
+    {% load thumbnail %}                            <!-- подгружаем шаблон для изображений -->
     {% for post in page %}                          <!-- проходим по списку записей-->
     <h3>
         Автор: {{ post.author.get_full_name }}, Дата публикации: {{ post.pub_date|date:"d M Y" }}
