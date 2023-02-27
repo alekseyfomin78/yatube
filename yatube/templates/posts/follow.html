@@ -1,16 +1,16 @@
 {% extends "base.html" %}                                        <!-- берем шаблон из файла base -->
-{% block title %}Посты подписчиков{% endblock %}     <!-- переопределяем блок title -->
-{% block header %}Посты подписчиков{% endblock %}    <!-- переопределяем блок header -->
+{% block title %}Посты подписчиков{% endblock %}                 <!-- переопределяем блок title -->
+{% block header %}Посты подписчиков{% endblock %}                <!-- переопределяем блок header -->
 {% block content %}                                              <!-- переопределяем блок content -->
 
-    {% include "menu.html" with index=True %}
+    {% include "includes/menu.html" with index=True %}
     {% load thumbnail %}                            <!-- подгружаем шаблон для изображений -->
     {% for post in page %}                          <!-- проходим по списку записей-->
-        {% include "post_item.html" with post=post %}
+        {% include "posts/post_item.html" with post=post %}
     {% endfor %}
 
     {% if page.has_other_pages %}                   <!-- список страниц для листания -->
-        {% include "paginator.html" with items=page paginator=paginator %}
+        {% include "includes/paginator.html" with items=page paginator=paginator %}
     {% endif %}
 
 {% endblock %}

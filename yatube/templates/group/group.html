@@ -8,11 +8,11 @@
     <p>{{ group.description }}</p>                                       <!-- описание группы -->
 
     {% for post in page %}                          <!-- проходим по списку постов группы-->
-        {% include "post_item.html" with post=post %}
+        {% include "posts/post_item.html" with post=post %}
     {% endfor %}
 
     {% if page.has_other_pages %}                   <!-- список страниц для листания -->
-        {% include "paginator.html" with items=page paginator=paginator %}
+        {% include "includes/paginator.html" with items=page paginator=paginator %}
     {% endif %}
 
 {% endblock %}

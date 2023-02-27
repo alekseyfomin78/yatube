@@ -28,8 +28,8 @@
                         <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
                                         <div class="h6 text-muted">
-                                        Подписчиков: XXX <br />
-                                        Подписан: XXX
+                                        Подписчиков: {{ following.count }} <br />
+                                        Подписан: {{ follower.count }}
                                         </div>
                                 </li>
                                 <li class="list-group-item">
@@ -46,7 +46,7 @@
 
             <!-- Пост -->
             {% for pos in post %}
-                {% include "post_item.html" with post=pos %}
+                {% include "posts/post_item.html" with post=pos %}
             {% endfor %}
      </div>
     </div>
