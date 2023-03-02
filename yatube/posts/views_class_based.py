@@ -7,6 +7,9 @@ from django.core.paginator import Paginator
 
 
 class PostsListView(ListView):
+    """
+    Главная страница, вывод всех постов, аналог view функции index
+    """
     model = Post
     template_name = 'index/index.html'
     paginate_by = 10
@@ -14,6 +17,9 @@ class PostsListView(ListView):
 
 
 class GroupPostsListView(ListView):
+    """
+    Cтраница группы, вывод всех постов группы, аналог view функции group_posts
+    """
     template_name = "group/group.html"
     paginate_by = 10
 
@@ -30,6 +36,9 @@ class GroupPostsListView(ListView):
 
 
 class NewPostCreateView(LoginRequiredMixin, CreateView):
+    """
+    Страница добавления нового поста, аналог view функции new_post
+    """
     model = Post
     template_name = "posts/new_post.html"
     form_class = PostForm
@@ -45,6 +54,9 @@ class NewPostCreateView(LoginRequiredMixin, CreateView):
 
 
 class ProfileDetailView(DetailView):
+    """
+    Профиль пользователя, аналог view функции profile
+    """
     model = User
     template_name = 'posts/profile.html'
     slug_field = 'username'  # detailview нужно передать либо pk, либо slug, поэтому переопределим переменную на 'username'
@@ -68,6 +80,9 @@ class ProfileDetailView(DetailView):
 
 
 class PostDetailView(DetailView):
+    """
+    Страница просмотра поста, аналог view функции post_view
+    """
     model = Post
     template_name = 'posts/post_view.html'
 
@@ -87,6 +102,9 @@ class PostDetailView(DetailView):
 
 
 class PostEditView(LoginRequiredMixin, UpdateView):
+    """
+    Страница редактирования поста, аналог view функции post_edit
+    """
     model = Post
     template_name = 'posts/new_post.html'
     form_class = PostForm
@@ -105,6 +123,9 @@ class PostEditView(LoginRequiredMixin, UpdateView):
 
 
 # class AddCommentView(LoginRequiredMixin, CreateView):
+#     """
+#     Страница добавления комментария к посту, аналог view функции add_comment
+#     """
 #     model = Comment
 #     template_name = 'posts/comments.html'
 #     form_class = CommentForm
@@ -137,6 +158,9 @@ class PostEditView(LoginRequiredMixin, UpdateView):
 
 
 class FollowPostsListView(LoginRequiredMixin, ListView):
+    """
+    Страница с постами авторов, на которых подписан пользователь, аналог view функции follow_index
+    """
     model = Post
     template_name = 'posts/follow.html'
     paginate_by = 10
