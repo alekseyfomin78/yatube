@@ -5,12 +5,12 @@
 
     {% include "includes/menu.html" with index=True %}
     {% load thumbnail %}                            <!-- подгружаем шаблон для изображений -->
-    {% for post in page %}                          <!-- проходим по списку записей-->
+    {% for post in page_obj %}                          <!-- проходим по списку записей-->
         {% include "posts/post_item.html" with post=post %}
     {% endfor %}
 
-    {% if page.has_other_pages %}                   <!-- список страниц для листания -->
-        {% include "includes/paginator.html" with items=page paginator=paginator %}
+    {% if page_obj.has_other_pages %}                   <!-- список страниц для листания -->
+        {% include "includes/paginator.html" with items=page_obj paginator=paginator %}
     {% endif %}
 
 {% endblock %}

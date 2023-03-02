@@ -7,12 +7,12 @@
     {% load thumbnail %}                                                 <!-- подгружаем шаблон для изображений -->
     <p>{{ group.description }}</p>                                       <!-- описание группы -->
 
-    {% for post in page %}                          <!-- проходим по списку постов группы-->
+    {% for post in page_obj %}                          <!-- проходим по списку постов группы-->
         {% include "posts/post_item.html" with post=post %}
     {% endfor %}
 
-    {% if page.has_other_pages %}                   <!-- список страниц для листания -->
-        {% include "includes/paginator.html" with items=page paginator=paginator %}
+    {% if page_obj.has_other_pages %}                   <!-- список страниц для листания -->
+        {% include "includes/paginator.html" with items=page_obj paginator=paginator %}
     {% endif %}
 
 {% endblock %}

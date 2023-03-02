@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import Post, Group, User, Follow
+from .models import Post, Group, User, Follow, Comment
 from .forms import PostForm, CommentForm
 from django.views.decorators.cache import cache_page
 
@@ -23,7 +23,7 @@ def index(request):
     page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
     page = paginator.get_page(page_number)  # получить записи с нужным смещением
 
-    context = {'page': page, 'paginator': paginator}
+    context = {'page_obj': page, 'paginator': paginator}
 
     return render(request, template, context)
 
@@ -49,7 +49,7 @@ def group_posts(request, slug):
     page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
     page = paginator.get_page(page_number)  # получить записи с нужным смещением
 
-    context = {"group": group, 'page': page, 'paginator': paginator}
+    context = {"group": group, 'page_obj': page, 'paginator': paginator}
 
     return render(request, template, context)
 
@@ -69,9 +69,9 @@ def new_post(request):
 
     # если данные в форме валидны, то сохраняем данные в БД и перенаправляем пользователя
     if form.is_valid():
-        temp_form = form.save(commit=False)
-        temp_form.author = request.user  # получаем текущего пользователя
-        temp_form.save()
+        temp_form = form.save(commit=False)  # не сохраняем форму в БД, т.к. еще нужно добавить пользователя в форму
+        temp_form.author = request.user  # добавляем текущего пользователя в форму
+        temp_form.save()  # сохраняем форму в БД
         # в случае успешной валидации перенаправляем на главную страницу
         return redirect('index')
 
@@ -92,7 +92,6 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
 
     following = author.following.filter(user=request.user)  # подписчики
-
     follower = author.follower.filter(user=request.user)  # свои подписки
 
     post_list = author.posts.all()
@@ -116,15 +115,12 @@ def post_view(request, username, post_id):
     """
     template = 'posts/post_view.html'
 
-    # TODO: не отображаются изображения у постов
-
     author = get_object_or_404(User, username=username)
 
     following = author.following.filter(user=request.user)  # подписчики
-
     follower = author.follower.filter(user=request.user)  # свои подписки
 
-    post = author.posts.filter(pk=post_id)
+    post = author.posts.filter(pk=post_id).first()
 
     context = {'author': author, 'post': post, 'following': following, 'follower': follower}
 
@@ -227,7 +223,7 @@ def follow_index(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
-    context = {'page': page}
+    context = {'page_obj': page}
 
     return render(request, template, context)
 
