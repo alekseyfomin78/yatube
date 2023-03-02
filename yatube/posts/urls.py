@@ -1,5 +1,5 @@
 from django.urls import path
-
+from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 from . import views_class_based
 from . import views_api
@@ -39,4 +39,31 @@ urlpatterns = [
 
     # Добавление комментария
     path("<str:username>/<int:post_id>/comment/", views.add_comment, name="add_comment"),
+    # path("<str:username>/<int:post_id>/comment/", views_class_based.AddCommentView.as_view(), name="add_comment"),
+]
+
+# API
+urlpatterns += [
+    # получение токена
+    path(route=r'api/v1/api-token-auth/', view=obtain_auth_token),
+
+    # маршруты для viewset'ов
+    # маршрут для получения комментариев к посту, в actions - get запрос обрабатывает функция get_comments и т.д.
+    path(route=r'api/v1/posts/<int:id>/comment/', view=viewsets_api.PostViewSet.as_view(
+        actions={
+            'post': 'post_comment',
+            'get': 'get_comments',
+        })),
+
+    path(route=r'api/v1/posts/<int:id>/comment/<int:comment_id>/', view=viewsets_api.PostViewSet.as_view(
+        actions={
+            'get': 'get_comment',
+            'put': 'put_comment',
+            'delete': 'delete_comment',
+        })),
+
+    # маршруты для view-функций и view-классов
+    # path(route=r'api/v1/posts/', view=views_api.api_posts),
+    # path(route=r'api/v1/posts/<int:id>/', view=views_api.api_posts_detail),  # view функция
+    # path(route=r'api/v1/posts/<int:id>/', view=views_api.APIPostDetail.as_view()),
 ]

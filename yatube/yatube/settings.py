@@ -56,14 +56,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework.authtoken',  # аутентификация через токен для api запросов
     "debug_toolbar",  # django debug toolbar
     'sorl.thumbnail',  # приложение для работы с графикой
+    'rest_framework',
+    'corsheaders',  # разрешение на обработку api запросов с другого домена
 ]
 
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -179,3 +183,33 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    # пагинация ответа на api запрос
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,  # максимальное кол-во объектов в ответе
+
+    # лимит запросов для авторизованных и неавторизованных пользователей
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '10000/day',  # лимит для UserRateThrottle
+        'anon': '1000/day',  # лимит для AnonRateThrottle
+    },
+
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+}
+
+CORS_ORIGIN_ALLOW_ALL = True  # True - разрешение обрабатывать api запросы, приходящие с любого хоста
+CORS_URLS_REGEX = r'^/api/.*$'  # определяет URL'ы, к которым можно обращаться с других хостов
