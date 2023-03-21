@@ -8,27 +8,24 @@ from django.core.paginator import Paginator
 
 class PostsListView(ListView):
     """
-    Главная страница, вывод всех постов, аналог view функции index
+    Главная страница
     """
     model = Post
     template_name = 'index/index.html'
     paginate_by = 10
-    # в context по умолчанию передадутся: paginator, page_obj - страница, object_list - посты
 
 
 class GroupPostsListView(ListView):
     """
-    Cтраница группы, вывод всех постов группы, аналог view функции group_posts
+    Cтраница группы
     """
     template_name = "group/group.html"
     paginate_by = 10
 
-    # переопределим запрос к БД, чтобы получать посты конкретной группы (slug)
     def get_queryset(self):
         self.group = get_object_or_404(Group, slug=self.kwargs['slug'])
         return self.group.posts.all()
 
-    # добавим в context переменную group
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['group'] = self.group
@@ -37,7 +34,7 @@ class GroupPostsListView(ListView):
 
 class NewPostCreateView(LoginRequiredMixin, CreateView):
     """
-    Страница добавления нового поста, аналог view функции new_post
+    Страница добавления нового поста
     """
     model = Post
     template_name = "posts/new_post.html"
@@ -49,18 +46,18 @@ class NewPostCreateView(LoginRequiredMixin, CreateView):
         temp_form.save()
         return super().form_valid(form)
 
-    def get_success_url(self):  # в случае валидности формы перенаправляем пользователя на главную страницу
+    def get_success_url(self):
         return reverse('index')
 
 
 class ProfileDetailView(DetailView):
     """
-    Профиль пользователя, аналог view функции profile
+    Профиль пользователя
     """
     model = User
     template_name = 'posts/profile.html'
-    slug_field = 'username'  # detailview нужно передать либо pk, либо slug, поэтому переопределим переменную на 'username'
-    context_object_name = 'author'  # переопределим переменную контекста с object на author
+    slug_field = 'username'
+    context_object_name = 'author'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
@@ -81,12 +78,11 @@ class ProfileDetailView(DetailView):
 
 class PostDetailView(DetailView):
     """
-    Страница просмотра поста, аналог view функции post_view
+    Страница просмотра поста
     """
     model = Post
     template_name = 'posts/post_view.html'
 
-    # в path нужно передать два параметра, переопределяем их
     slug_field = 'username'
     pk_url_kwarg = 'post_id'
 
@@ -103,63 +99,25 @@ class PostDetailView(DetailView):
 
 class PostEditView(LoginRequiredMixin, UpdateView):
     """
-    Страница редактирования поста, аналог view функции post_edit
+    Страница редактирования поста
     """
     model = Post
     template_name = 'posts/new_post.html'
     form_class = PostForm
 
-    # в path нужно передать два параметра, переопределяем их
     slug_field = 'username'
     pk_url_kwarg = 'post_id'
 
-    # переопределяем запрос к БД, чтобы получать посты созданные только текущим пользователем
     def get_queryset(self):
         return super().get_queryset().filter(author=self.request.user)
 
-    # в случае валидности формы перенаправляем пользователя на страницу поста
     def get_success_url(self):
         return reverse('post', kwargs={'username': self.request.user, 'post_id': self.object.id})
 
 
-# class AddCommentView(LoginRequiredMixin, CreateView):
-#     """
-#     Страница добавления комментария к посту, аналог view функции add_comment
-#     """
-#     model = Comment
-#     template_name = 'posts/comments.html'
-#     form_class = CommentForm
-#
-#     slug_field = 'username'
-#     pk_url_kwarg = 'post_id'
-#
-#     def get_slug_field(self):
-#         q = super().get_slug_field()
-#         print('slug', q)
-#         return q
-#
-#     def get_queryset(self):
-#         q = super().get_queryset()
-#         print(q)
-#         return q
-#
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data(object_list=object_list, **kwargs)
-#         #context['post'] = self.object.post
-#         print('context: ', context)
-#         return context
-#
-#     def form_valid(self, form):
-#         temp_form = form.save(commit=False)
-#         temp_form.author = self.request.user
-#         #temp_form.post =
-#         temp_form.save()
-#         return super().form_valid(form)
-
-
 class FollowPostsListView(LoginRequiredMixin, ListView):
     """
-    Страница с постами авторов, на которых подписан пользователь, аналог view функции follow_index
+    Страница с постами авторов, на которых подписан пользователь
     """
     model = Post
     template_name = 'posts/follow.html'

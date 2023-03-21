@@ -14,12 +14,11 @@ from pathlib import Path
 from distutils.util import strtobool
 from dotenv import load_dotenv
 
-load_dotenv()  # для загрузки переменных окружения
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# путь к папке с шаблонами
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # Quick-start development settings - unsuitable for production
@@ -46,8 +45,8 @@ INTERNAL_IPS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'posts',  # приложение posts
-    'users',  # приложение users
+    'posts',
+    'users',
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django.contrib.admin',
@@ -56,12 +55,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework.authtoken',  # аутентификация через токен для api запросов
-    "debug_toolbar",  # django debug toolbar
-    'sorl.thumbnail',  # приложение для работы с графикой
+    'rest_framework.authtoken',
+    "debug_toolbar",
+    'sorl.thumbnail',
     'rest_framework',
     'django_filters',
-    'corsheaders',  # разрешение на обработку api запросов с другого домена
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +88,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'users.context_processors.context.year',  # определяем в проекте функцию, которая возвращает текущий год
+                'users.context_processors.context.year',
             ],
         },
     },
@@ -101,7 +100,7 @@ WSGI_APPLICATION = 'yatube.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# определение БД, к которой подключается приложение
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -146,13 +145,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-# URL, который будет использоваться для запросов к статическим файлам
 STATIC_URL = '/static_files/'
 
-# задаём адрес директории, куда командой *collectstatic* будет собрана вся статика
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-# директория для загрузки изображений
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -163,22 +159,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login
 LOGIN_URL = "/auth/login/"
-# при успешном логине перенаправление на главную страницу
 LOGIN_REDIRECT_URL = "index"
-# при выходе из системы перенаправление на главную страницу
 LOGOUT_REDIRECT_URL = "index"
 
-# подключение модуля для отправки писем на почту (для смены пароля например)
-# подключаем движок filebased.EmailBackend - который эмулирует отправку письма на почту,
-# на самом деле письмо не отправляется, будет только складываться в указанную директорию
+
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# директория, в которую будут складываться файлы писем
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 
-# Идентификатор текущего сайта
 SITE_ID = 1
 
-# кэширование (на проде обычно используется БД Redis)
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -194,18 +183,17 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    # пагинация ответа на api запрос
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100,  # максимальное кол-во объектов в ответе
 
-    # лимит запросов для авторизованных и неавторизованных пользователей
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100,
+
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.UserRateThrottle',
         'rest_framework.throttling.AnonRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'user': '10000/day',  # лимит для UserRateThrottle
-        'anon': '1000/day',  # лимит для AnonRateThrottle
+        'user': '10000/day',
+        'anon': '1000/day',
     },
 
     'DEFAULT_FILTER_BACKENDS': [
@@ -213,29 +201,28 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ORIGIN_ALLOW_ALL = True  # True - разрешение обрабатывать api запросы, приходящие с любого хоста
-CORS_URLS_REGEX = r'^/api/.*$'  # определяет URL'ы, к которым можно обращаться с других хостов
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static_files/'),)
 
-# логи: записываем в файл и выводим в консоль
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'formatters': {  # формат лога
+    'formatters': {
         'verbose': {
             'format': '[%(asctime)s: %(levelname)s] %(message)s'
         }
     },
     'handlers': {
-        'file_handler': {  # обработчик для записи в файл
+        'file_handler': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': os.path.join(os.path.abspath(os.path.pardir), 'debug.log'),
             'formatter': 'verbose',
 
         },
-        'stream_handler': {  # обработчик для вывода в консоль
+        'stream_handler': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
@@ -243,7 +230,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file_handler', 'stream_handler'],  # добавляем оба обработчика
+            'handlers': ['file_handler', 'stream_handler'],
             'level': 'INFO',
             'propagate': True,
         },

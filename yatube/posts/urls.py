@@ -20,22 +20,22 @@ urlpatterns = [
     # path("follow/", views.follow_index, name="follow_index"),
     path("follow/", views_class_based.FollowPostsListView.as_view(), name="follow_index"),
 
-    # Профайл пользователя
+    # профайл пользователя
     # path('<str:username>/', views.profile, name='profile'),
     path('<str:slug>/', views_class_based.ProfileDetailView.as_view(), name='profile'),
 
     path("<str:username>/follow/", views.profile_follow, name="profile_follow"),
     path("<str:username>/unfollow/", views.profile_unfollow, name="profile_unfollow"),
 
-    # Просмотр поста
+    # просмотр поста
     # path('<str:username>/<int:post_id>/', views.post_view, name='post'),
     path('<str:username>/<int:post_id>/', views_class_based.PostDetailView.as_view(), name='post'),
 
-    # Редактирование поста
+    # редактирование поста
     # path('<str:username>/<int:post_id>/edit/', views.post_edit, name='post_edit'),
     path('<str:username>/<int:post_id>/edit/', views_class_based.PostEditView.as_view(), name='post_edit'),
 
-    # Добавление комментария
+    # добавление комментария
     path("<str:username>/<int:post_id>/comment/", views.add_comment, name="add_comment"),
     # path("<str:username>/<int:post_id>/comment/", views_class_based.AddCommentView.as_view(), name="add_comment"),
 ]

@@ -18,7 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(slug_field='username', read_only=True)
     permission_classes = [IsAuthenticated]
-    # comments = CommentSerializer(many=True, required=False)  # для получения списка комментариев к каждому посту
+    # comments = CommentSerializer(many=True, required=False)
 
     class Meta:
         model = Post

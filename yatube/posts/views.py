@@ -7,21 +7,18 @@ from .forms import PostForm, CommentForm
 from django.views.decorators.cache import cache_page
 
 
-# @cache_page(20)  # кэширование страницы, обновление(запрос к БД и т.д) страницы происходит раз в 20 сек.
+# @cache_page(20)
 def index(request):
     """
-    Функция для представления главной страницы.
-
-    :param request:
-    :return: шаблон главной страницы, содержащий все посты
+    Функция для представления главной страницы
     """
 
     template = "index/index.html"
 
     post_list = Post.objects.all()
-    paginator = Paginator(post_list, 10)  # показывать по 10 записей на странице.
-    page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
-    page = paginator.get_page(page_number)  # получить записи с нужным смещением
+    paginator = Paginator(post_list, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
 
     context = {'page_obj': page, 'paginator': paginator}
 
@@ -30,24 +27,17 @@ def index(request):
 
 def group_posts(request, slug):
     """
-    Функция для представления страницы группы.
-
-    :param request:
-    :param slug: название группы
-
-    :return: шаблон страницы группы, содержащий посты только заданной группы
+    Функция для представления страницы группы
     """
 
     template = "group/group.html"
 
-    # функция get_object_or_404 получает по заданным критериям объект из базы данных или возвращает сообщение об ошибке,
-    # если объект не найден
     group = get_object_or_404(Group, slug=slug)
 
-    post_list = group.posts.all()  # используем related_name модели Group
-    paginator = Paginator(post_list, 10)  # показывать по 10 записей на странице.
-    page_number = request.GET.get('page')  # переменная в URL с номером запрошенной страницы
-    page = paginator.get_page(page_number)  # получить записи с нужным смещением
+    post_list = group.posts.all()
+    paginator = Paginator(post_list, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
 
     context = {"group": group, 'page_obj': page, 'paginator': paginator}
 
@@ -57,22 +47,16 @@ def group_posts(request, slug):
 @login_required()
 def new_post(request):
     """
-    Добавить новую запись, доступно для авторизованного пользователя.
-
-    :return: в случае успешной валидации формы перенаправление на главную страницу и сохранение данных из форма в БД,
-    иначе страница не меняется и данные не сохраняются
+    Добавить новый пост, доступно для авторизованного пользователя
     """
     template = "posts/new_post.html"
 
-    # определяем форму и получаем данные введеные пользователем
     form = PostForm(request.POST or None, files=request.FILES or None)
 
-    # если данные в форме валидны, то сохраняем данные в БД и перенаправляем пользователя
     if form.is_valid():
-        temp_form = form.save(commit=False)  # не сохраняем форму в БД, т.к. еще нужно добавить пользователя в форму
-        temp_form.author = request.user  # добавляем текущего пользователя в форму
-        temp_form.save()  # сохраняем форму в БД
-        # в случае успешной валидации перенаправляем на главную страницу
+        temp_form = form.save(commit=False)
+        temp_form.author = request.user
+        temp_form.save()
         return redirect('index')
 
     return render(request, template, {'form': form})
@@ -80,19 +64,15 @@ def new_post(request):
 
 def profile(request, username):
     """
-    Профиль пользователя.
-
-    :param request:
-    :param username:
-    :return: страница профиль пользователя и записи этого пользователя
+    Профиль пользователя
     """
 
     template = 'posts/profile.html'
 
     author = get_object_or_404(User, username=username)
 
-    following = author.following.filter(user=request.user)  # подписчики
-    follower = author.follower.filter(user=request.user)  # свои подписки
+    following = author.following.filter(user=request.user)
+    follower = author.follower.filter(user=request.user)
 
     post_list = author.posts.all()
     paginator = Paginator(post_list, 10)
@@ -106,19 +86,14 @@ def profile(request, username):
 
 def post_view(request, username, post_id):
     """
-    Просмотр записи пользователя.
-
-    :param request:
-    :param username:
-    :param post_id:
-    :return: страница записи, содержащая полную информацию об этой записи
+    Просмотр поста
     """
     template = 'posts/post_view.html'
 
     author = get_object_or_404(User, username=username)
 
-    following = author.following.filter(user=request.user)  # подписчики
-    follower = author.follower.filter(user=request.user)  # свои подписки
+    following = author.following.filter(user=request.user)
+    follower = author.follower.filter(user=request.user)
 
     post = author.posts.filter(pk=post_id).first()
 
@@ -130,27 +105,18 @@ def post_view(request, username, post_id):
 @login_required()
 def post_edit(request, username, post_id):
     """
-    Редактирование записи.
-
-    :param request:
-    :param username:
-    :param post_id:
-    :return: если текущий пользователь - это автор записи, то возвращается страница редактирования записи, иначе
-    страница просмотра записи
+    Редактирование записи
     """
     template = 'posts/new_post.html'
 
     author = get_object_or_404(User, username=username)
     post = author.posts.filter(pk=post_id).first()
 
-    # проверка что текущий пользователь - это автор записи
     if author != request.user:
         return redirect('post', username, post_id)
 
-    # определяем форму и получаем данные введенные пользователем
     form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
 
-    # если данные в форме валидны, то сохраняем данные в БД и перенаправляем пользователя
     if form.is_valid():
         form.save()
         return redirect('post', username, post_id)
@@ -162,16 +128,12 @@ def post_edit(request, username, post_id):
 def add_comment(request, username, post_id):
     """
     Добавление комментария к посту
-
-    :param request:
-    :param post_id:
-    :return:
     """
     template = 'posts/comments.html'
 
     post = get_object_or_404(Post, pk=post_id)
 
-    items = post.comments.all()  # комметарии к посту
+    items = post.comments.all()
 
     form = CommentForm(request.POST or None)
 
@@ -188,22 +150,13 @@ def add_comment(request, username, post_id):
 def page_not_found(request, exception):
     """
     Страница 404 ошибки
-
-    :param request:
-    :param exception:
-    :return:
     """
-    # Переменная exception содержит отладочную информацию,
-    # выводить её в шаблон пользователской страницы 404 мы не станем
     return render(request, "misc/404.html", {"path": request.path}, status=404)
 
 
 def server_error(request):
     """
     Страница 500 ошибки
-
-    :param request:
-    :return:
     """
     return render(request, "misc/500.html", status=500)
 
@@ -212,9 +165,6 @@ def server_error(request):
 def follow_index(request):
     """
     Страница с постами авторов, на которых подписан пользователь
-
-    :param request:
-    :return:
     """
     template = 'posts/follow.html'
 
@@ -232,15 +182,11 @@ def follow_index(request):
 def profile_follow(request, username):
     """
     Подписаться на пользователя
-
-    :param request:
-    :param username:
-    :return:
     """
     follow_author = get_object_or_404(User, username=username)
 
     if follow_author != request.user and (not request.user.follower.filter(author=follow_author).exists()):
-        Follow.objects.create(user=request.user, author=follow_author)  # создаем подписчика в БД
+        Follow.objects.create(user=request.user, author=follow_author)
 
     return redirect('profile', username)
 
@@ -249,16 +195,12 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     """
     Отписаться от пользователя
-
-    :param request:
-    :param username:
-    :return:
     """
 
     follow_author = get_object_or_404(User, username=username)
     data_follow = request.user.follower.filter(author=follow_author)
 
     if data_follow.exists():
-        data_follow.delete()  # удаляем подписчика из БД
+        data_follow.delete()
 
     return redirect('profile', username)
