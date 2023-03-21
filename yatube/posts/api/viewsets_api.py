@@ -1,10 +1,10 @@
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
-from .models import Post, Comment
-from .serializer import PostSerializer, CommentSerializer
+from posts.models import Post, Comment
+from posts.api.serializer import PostSerializer, CommentSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from .permissions import OwnResourcePermission
+from posts.api.permissions import IsAuthor
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -14,7 +14,7 @@ class PostViewSet(ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [OwnResourcePermission]  # ограничение на уровне всего viewset'а
+    permission_classes = (IsAuthor,)  # ограничение на уровне всего viewset'а
     pagination_class = PageNumberPagination  # пагинация ответа на api запросы, макс. число указано в settings.py
 
     # в POST запросе при сохранении нового поста дописываем в поле author текущего пользователя
