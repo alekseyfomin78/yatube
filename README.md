@@ -1,4 +1,4 @@
-# Социальная сеть YaTube
+# Социальная сеть
 
 
 Пользователи могут:
@@ -11,6 +11,7 @@
 Стэк технологий:
 - Python
 - Django 3.2
+- Django REST Framework
 - SQLite3
 - Bootstrap
 - CSS
