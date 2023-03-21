@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from . import views_class_based
-# from .api import views_api
 
 
 urlpatterns = [
@@ -40,15 +39,3 @@ urlpatterns = [
     path("<str:username>/<int:post_id>/comment/", views.add_comment, name="add_comment"),
     # path("<str:username>/<int:post_id>/comment/", views_class_based.AddCommentView.as_view(), name="add_comment"),
 ]
-
-# API
-# urlpatterns += [
-    # получение токена
-    # path(route=r'api/v1/api-token-auth/', view=obtain_auth_token),
-
-    # маршруты для view-функций и view-классов
-    # path(route=r'api/v1/posts/', view=views_api.api_posts),
-    # path(route=r'api/v1/posts/', view=views_api.APIPosts.as_view()),
-    # path(route=r'api/v1/posts/<int:id>/', view=views_api.api_posts_detail),
-    # path(route=r'api/v1/posts/<int:id>/', view=views_api.APIPostDetail.as_view()),
-# ]
