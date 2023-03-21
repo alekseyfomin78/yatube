@@ -17,15 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.contrib.flatpages import views
-from django.conf.urls import handler404, handler500
 from django.conf.urls.static import static
-from rest_framework.routers import DefaultRouter
-from posts.viewsets_api import PostViewSet
+from django.views.generic import TemplateView
 
-
-# маршрут для api
-router = DefaultRouter()
-router.register('api/v1/posts', PostViewSet)
 
 handler404 = "posts.views.page_not_found"
 handler500 = "posts.views.server_error"
@@ -38,10 +32,12 @@ urlpatterns = [
     # регистрация и авторизация
     path('auth/', include('users.urls')),
     path('auth/', include('django.contrib.auth.urls')),
+    # api
+    path('api/', include('posts.api.urls')),
+    # api doc
+    path('redoc/', TemplateView.as_view(template_name='redoc.html'), name='redoc'),
     # импорт из приложения posts
     path('', include('posts.urls')),
-    # api
-    path('', include(router.urls)),
 ]
 
 urlpatterns += [
