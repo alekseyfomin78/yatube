@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "debug_toolbar",  # django debug toolbar
     'sorl.thumbnail',  # приложение для работы с графикой
     'rest_framework',
+    'django_filters',
     'corsheaders',  # разрешение на обработку api запросов с другого домена
 ]
 
@@ -146,7 +147,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 # URL, который будет использоваться для запросов к статическим файлам
-STATIC_URL = '/static/'
+STATIC_URL = '/static_files/'
 
 # задаём адрес директории, куда командой *collectstatic* будет собрана вся статика
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -191,6 +192,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     # пагинация ответа на api запрос
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -213,3 +215,37 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True  # True - разрешение обрабатывать api запросы, приходящие с любого хоста
 CORS_URLS_REGEX = r'^/api/.*$'  # определяет URL'ы, к которым можно обращаться с других хостов
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static_files/'),)
+
+# логи: записываем в файл и выводим в консоль
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {  # формат лога
+        'verbose': {
+            'format': '[%(asctime)s: %(levelname)s] %(message)s'
+        }
+    },
+    'handlers': {
+        'file_handler': {  # обработчик для записи в файл
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(os.path.abspath(os.path.pardir), 'debug.log'),
+            'formatter': 'verbose',
+
+        },
+        'stream_handler': {  # обработчик для вывода в консоль
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file_handler', 'stream_handler'],  # добавляем оба обработчика
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
